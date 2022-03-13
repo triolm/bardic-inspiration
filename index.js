@@ -18,6 +18,4 @@ getUrl = async () => {
     return await res.data;
 }
  
-client.login(process.env.TOKEN); 
-
-keepAlive();
+client.login(process.env.TOKEN);
