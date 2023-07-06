@@ -25,7 +25,7 @@ getUrl = async () => {
 
 getUninspiringUrl = async () => {
     const res = await axios.get('https://source.unsplash.com/random/600x600');
-    return await res.data;
+    return res.request.res.responseUrl
 }
 
 
