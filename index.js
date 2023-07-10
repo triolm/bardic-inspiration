@@ -1,5 +1,9 @@
-const { Client, Intents, Message } = require('discord.js');
+const { Client, Intents, MessageAttachment } = require('discord.js');
 const axios = require('axios');
+const { getCanvasImage, registerFont, UltimateTextToImage } = require("ultimate-text-to-image");
+
+
+
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 require('dotenv').config();
 
@@ -8,13 +12,19 @@ client.on('ready', () => {
 });
 
 client.on('message', async message => {
-    if (message.content.trim().toLowerCase() == "!inspire") {
+    const msg = message.content.trim().toLowerCase()
+    if (msg == "!inspire") {
         const url = await getUrl();
         await message.channel.send(url);
     }
-    else if (message.content.trim().toLowerCase() == "!don't inspire") {
+    else if (msg == "!don't inspire") {
         const url = await getUninspiringUrl();
         await message.channel.send(url);
+    }
+    else if (msg.startsWith("!quote")) {
+        const buffer = await getQuoteURI(msg.substring(6).trim())
+        const attachment = new MessageAttachment(buffer, 'quote.png')
+        await message.channel.send(attachment);
     }
 });
 
@@ -29,5 +39,38 @@ getUninspiringUrl = async () => {
 }
 
 
-console.log(process.env.TOKEN); 
+getQuoteURI = async (quote) => {
+    const url = await getUninspiringUrl();
+    const canvas = await getCanvasImage({ url })
+
+    registerFont("./impact.ttf", { family: "Impact", weight: 100 });
+
+
+    const img = new UltimateTextToImage(quote,
+        {
+            width: 600,
+            height: 600,
+            valign: "middle",
+            align: "center",
+            bold: "bold",
+            fontFamily: "Impact",
+            fontSize: 72,
+            fontColor: "#FFFFFF",
+            strokeSize: 2,
+            strokeColor: "#000000",
+            backgroundColor: "#FFFFFF00",
+            images: [
+                {
+                    canvasImage: canvas,
+                    layer: -1, repeat: "fit"
+                },
+            ]
+        }
+    );
+    rendered = img.render().toBuffer();
+    return rendered
+}
+
+
+console.log(process.env.TOKEN);
 client.login(process.env.TOKEN);

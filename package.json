@@ -12,6 +12,7 @@
   "dependencies": {
     "axios": "^0.23.0",
     "discord.js": "^12.4.0",
-    "dotenv": "^16.0.0"
+    "dotenv": "^16.0.0",
+    "ultimate-text-to-image": "^1.0.1"
   }
 }
